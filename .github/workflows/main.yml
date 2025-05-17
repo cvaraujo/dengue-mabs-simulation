@@ -16,7 +16,7 @@ jobs:
         with:
           source-directory: '.'
           destination-github-username: 'cvaraujo'
-          destination-repository-name: 'dengue-arp-tool'
+          destination-repository-name: 'dengue-cbrp-framework'
           user-email: carlosvdaraujo@gmail.com
           target-branch: main
           commit-message: 'Update the simulation'
