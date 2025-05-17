@@ -1,9 +1,9 @@
---drop table eggs;
---drop table people;
---drop table mosquitoes;
---drop table breeding_sites;
---drop table metrics;
---drop table cases;
+DROP TABLE IF EXISTS eggs;
+DROP TABLE IF EXISTS people;
+DROP TABLE IF EXISTS mosquitoes;
+DROP TABLE IF EXISTS breeding_sites;
+DROP TABLE IF EXISTS metrics;
+DROP TABLE IF EXISTS cases;
 
 CREATE TABLE people (
     execution_id INT NOT NULL,
@@ -13,7 +13,7 @@ CREATE TABLE people (
     name VARCHAR(40),
     id INT,
     date_of_birth DATE,
-    objective varchar(20) DEFAULT "resting",
+    objective VARCHAR(20) DEFAULT 'resting',
     speed FLOAT DEFAULT -1.0,
     state INT DEFAULT 0,
     living_place INT DEFAULT -1,
@@ -21,7 +21,8 @@ CREATE TABLE people (
     start_work_h INT DEFAULT -1,
     end_work_h INT DEFAULT -1,
     x FLOAT DEFAULT -1.0,
-    y FLOAT DEFAULT -1.0
+    y FLOAT DEFAULT -1.0,
+    PRIMARY KEY (execution_id, simulation_id, started_from_cycle, cycle, id)
 );
 
 CREATE TABLE mosquitoes (
@@ -37,7 +38,8 @@ CREATE TABLE mosquitoes (
     curr_building INT DEFAULT -1,
     bs_id INT DEFAULT -1,
     x FLOAT DEFAULT -1.0,
-    y FLOAT DEFAULT -1.0
+    y FLOAT DEFAULT -1.0,
+    PRIMARY KEY (execution_id, simulation_id, started_from_cycle, cycle, id)
 );
 
 CREATE TABLE breeding_sites (
@@ -48,11 +50,12 @@ CREATE TABLE breeding_sites (
     name VARCHAR(40),
     id INT,
     date_of_birth DATE,
-    active BOOLEAN DEFAULT true,
+    active BOOLEAN DEFAULT TRUE,
     eggs INT DEFAULT -1,
     curr_building INT DEFAULT -1,
     x FLOAT DEFAULT -1.0,
-    y FLOAT DEFAULT -1.0
+    y FLOAT DEFAULT -1.0,
+    PRIMARY KEY (execution_id, simulation_id, started_from_cycle, cycle, id)
 );
 
 CREATE TABLE eggs (
@@ -71,12 +74,22 @@ CREATE TABLE metrics (
     cycle INT,
     started_from_cycle INT DEFAULT 0,
     event_date DATE,
-    specie varchar(30),
-    susceptible int DEFAULT 0,
-    exposed int DEFAULT 0,
-    infected int DEFAULT 0,
-    recovered int DEFAULT 0,
-    dead int DEFAULT 0
+    specie VARCHAR(30),
+    susceptible INT DEFAULT 0,
+    exposed INT DEFAULT 0,
+    infected INT DEFAULT 0,
+    recovered INT DEFAULT 0,
+    dead INT DEFAULT 0,
+    PRIMARY KEY (execution_id, simulation_id, started_from_cycle, cycle, event_date)
+);
+
+CREATE TABLE metrics_infected_people (
+	execution_id INT NOT NULL,
+	simulation_id INT NOT NULL,
+    cycle INT,
+	id INT NOT NULL,
+	event_date DATE NOT NULL,
+	living_place INT NOT NULL
 );
 
 CREATE TABLE cases (
@@ -88,37 +101,10 @@ CREATE TABLE cases (
     y FLOAT
 );
 
-.mode csv
+-- SELECT pg_terminate_backend(pid)
+-- FROM pg_stat_activity
+-- WHERE pid <> pg_backend_pid()
+--   AND datname = 'dengue-propagation'
+--   AND state = 'idle';
 
--- .import sinan_cases.csv cases
-.import dengue-arp-simulation/data/sinan_cases.csv cases
-
--- drop table eggs;
--- drop table people;
--- drop table mosquitoes;
--- drop table breeding_sites;
--- drop table metrics;
-
--- select * from people where simulation_id = 1 and cycle = 0 and state = 1 ORDER BY cycle DESC;
--- update people SET speed=-1.0, living_place=-1,working_place=-1 where simulation_id = 1 and cycle = 0;
-    
--- delete from mosquitoes;
--- delete from people;
--- delete from eggs;
--- delete from breeding_sites;
--- delete from metrics;
-
--- select * from people where working_place = -1;
--- select * from mosquitoes;
--- select * from breeding_sites;
--- select * from eggs;
--- select * from metrics where execution_id = 1 and simulation_id = 1;
-
--- select * from metrics where simulation_id = 1;
-
--- SELECT * FROM cases WHERE city = "LIMOEIRO" AND data_notification BETWEEN "2020-05-01" AND "2020-05-08";
-
--- update people SET speed=-1.0,living_place=-1,working_place=-1 where simulation_id = 1 and cycle = 0;
-
--- select * from metrics;
--- execution_id = 1 and cycle = 0;
+-- COPY cases FROM '/tmp/sinan_cases.csv' WITH (FORMAT csv, HEADER true);
